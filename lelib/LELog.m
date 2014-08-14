@@ -6,7 +6,11 @@
 //  Copyright (c) 2013,2014 Logentries. All rights reserved.
 //
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 #import "LELog.h"
 #import "LEBackgroundThread.h"
@@ -29,9 +33,11 @@ extern char* le_token;
     self = [super init];
     if (le_init()) return nil;
     
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(notificationReceived:) name:UIApplicationWillEnterForegroundNotification object:nil];
-
+#endif
+    
     le_poke();
 
     return self;
@@ -39,8 +45,10 @@ extern char* le_token;
 
 - (void)dealloc
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+#endif
 }
 
 - (void)log:(NSObject*)object
@@ -96,6 +104,8 @@ extern char* le_token;
 
 - (void)notificationReceived:(NSNotification*)notification
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+
     if ([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
         
         if (self.logApplicationLifecycleNotifications) {
@@ -136,10 +146,12 @@ extern char* le_token;
         [self log:notification.name];
         return;
     }
+#endif
 }
 
 - (void)registerForNotifications
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     
     [center addObserver:self selector:@selector(notificationReceived:) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -148,10 +160,12 @@ extern char* le_token;
     [center addObserver:self selector:@selector(notificationReceived:) name:UIApplicationWillTerminateNotification object:nil];
     [center addObserver:self selector:@selector(notificationReceived:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [center addObserver:self selector:@selector(notificationReceived:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+#endif
 }
 
 - (void)unregisterFromNotifications
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     [center removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [center removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
@@ -159,6 +173,7 @@ extern char* le_token;
     [center removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+#endif
 }
 
 - (void)setLogApplicationLifecycleNotifications:(BOOL)logApplicationLifecycleNotifications

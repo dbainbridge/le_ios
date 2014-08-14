@@ -74,9 +74,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	{
 			if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) return YES;
     }
-	
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
 	if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) return YES;
-    
+#endif
 	return NO;
 }
 
